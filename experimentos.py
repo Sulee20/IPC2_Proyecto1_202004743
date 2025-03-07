@@ -1,4 +1,5 @@
 from estructuras import Matriz, ListaParejas
+from graficas import Graficas, generar_grafico_paso, generar_grafico_completo
 
 experimentos = []
 
@@ -54,6 +55,7 @@ def show_rejilla(rejilla):
             else:
                 fila.append(f"{valor:^5}")  
         print(" ".join(fila))
+    
 
 def show_resultado(rejilla, celulas_inertes_total):
     
@@ -199,6 +201,10 @@ def aplicar_accion(rejilla, parejas, celulas_inertes_total):
 def ejecutar_paso_paso(rejilla, parejas):
     paso = 0
     celulas_inertes_total = 0
+
+    graficas = Graficas("experimento_paso_a_paso")
+    
+    graficas.agregar_paso(rejilla, f"Paso {paso}")
     
     print(f"\nPaso {paso}: ")
     show_rejilla(rejilla)
@@ -206,28 +212,43 @@ def ejecutar_paso_paso(rejilla, parejas):
     while True:
         paso += 1
         print(f"\nPaso {paso}: ")
-        
+
         accion, celulas_inertes_total = aplicar_accion(rejilla, parejas, celulas_inertes_total)
-        
+        graficas.agregar_paso(rejilla, f"Paso {paso}")
+        generar_grafico_paso(graficas)
+
         if not accion:
             print("Experimento terminado")
             break
     
     show_resultado(rejilla, celulas_inertes_total)
+   
 
 def ejecutar_completo(rejilla, parejas):
     paso = 0
     celulas_inertes_total = 0
+
+    graficas = Graficas("experimento_completo")
+    graficas.set_estado_inicial(rejilla)
+    
+    print("\nEstado Inicial:")
+    show_rejilla(rejilla)
     
     while True:
         paso += 1
         accion, celulas_inertes_total = aplicar_accion(rejilla, parejas, celulas_inertes_total)
         if not accion:
             break
+    graficas.set_estado_final(rejilla)
+    
+  
+    generar_grafico_completo(graficas)
 
     print(f"El experimento se completó en {paso-1} pasos")
     show_rejilla(rejilla)
     show_resultado(rejilla, celulas_inertes_total)
+    print("Si")
+
 
 def desarrollar_experimento(experimento):
     
